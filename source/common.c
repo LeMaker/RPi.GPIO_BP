@@ -33,9 +33,9 @@ const int physToGpio_BP [64] =		//BOARD MODE
 	-1, -1, //1, 2
 	53, -1, //3, 4
 	52, -1, //5, 6
-	259, 224, //7, 8  (8--228)
-	-1, 225, //9, 10
-	275, 226, //11, 12
+	226, 228, //7, 8
+	-1, 229, //9, 10
+	275, 259, //11, 12
 	274, -1, //13, 14
 	273, 244, //15, 16
 	-1, 245, //17, 18
@@ -43,7 +43,6 @@ const int physToGpio_BP [64] =		//BOARD MODE
 	269, 272, //21, 22
 	267, 266, //23, 24
 	-1, 270, //25, 26
-	
 	257, 256, //27, 28
 	35, -1, //29, 30
 	277, 276, //31, 32
@@ -56,21 +55,20 @@ const int physToGpio_BP [64] =		//BOARD MODE
 } ;
 const int pinTobcm_BP [64] =	//BCM MODE
 {
-	-1,-1, //map to BCM GPIO0,1
+	257,256, //map to BCM GPIO0,1
 	53,52, //map to BCM GPIO2,3
-	259,-1, //map to BCM GPIO4,5
-	-1,270, //map to BCM GPIO6,7
+	226,35, //map to BCM GPIO4,5
+	277,270, //map to BCM GPIO6,7
 	266,269, //map to BCM GPIO8,9
 	268,267, //map to BCM GPIO10,11
-	-1,-1, //map to BCM GPIO12,13
-	224,225, //map to BCM GPIO14,15
-	-1,275, //map to BCM GPIO16,17
-	226,-1, //map to BCM GPIO18,19
-	-1, -1, //map to BCM GPIO20,21
+	276,45, //map to BCM GPIO12,13
+	228,229, //map to BCM GPIO14,15
+	38,275, //map to BCM GPIO16,17
+	259,39, //map to BCM GPIO18,19
+	44, 40, //map to BCM GPIO20,21
 	273,244, //map to BCM GPIO22,23
 	245,272, //map to BCM GPIO24,25
-	-1, 274, //map to BCM GPIO26,27
-	
+	37, 274, //map to BCM GPIO26,27
 	-1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 29... 44
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, //45... 60
 	-1, -1, -1, -1 // ...63
@@ -91,7 +89,6 @@ const int physToGpioR3 [64] =//head num map to BCMpin
 	9, 25,
 	11, 8,
 	-1, 7, // 25, 26
-	
 	0, 1, //27, 28
 	5, -1, //29, 30
 	6, 12, //31, 32
@@ -103,6 +100,7 @@ const int physToGpioR3 [64] =//head num map to BCMpin
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // ... 56
 	-1, -1, -1, -1, -1, -1, -1, // ... 63
 } ;
+
 
 int setup_error = 0;
 int module_setup = 0;

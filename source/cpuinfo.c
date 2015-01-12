@@ -61,6 +61,6 @@ int get_rpi_revision(void)
       return -1;
 
 	if(f_a20) {		//bananapi		1
-	      return 1;//bananapi pro	2
+	      return 2;//bananapi pro	2
 	}
 }

@@ -604,7 +604,7 @@ static PyObject *py_setwarnings(PyObject *self, PyObject *args)
    Py_RETURN_NONE;
 }
 
-static const char moduledocstring[] = "GPIO functionality of a Banana Pi using Python";
+static const char moduledocstring[] = "GPIO functionality of a Banana Pro using Python";
 
 PyMethodDef rpi_gpio_methods[] = {
    {"setup", (PyCFunction)py_setup_channel, METH_VARARGS | METH_KEYWORDS, "Set up the GPIO channel, direction and (optional) pull/up down control\nchannel        - either board pin number or BCM number depending on which mode is set.\ndirection      - INPUT or OUTPUT\n[pull_up_down] - PUD_OFF (default), PUD_UP or PUD_DOWN\n[initial]      - Initial value for an output channel"},
@@ -667,10 +667,10 @@ D	printf("BAPI: revision(%d)\n",revision);
       return;
 #endif
    } else if (revision == 1) {
-      pin_to_gpio = &physToGpio_BP;//&pin_to_gpio_rev1;
+      pin_to_gpio = NULL;//&pin_to_gpio_rev1;
    } else { // assume revision 2
       //pin_to_gpio = &pin_to_gpio_rev2;
-      pin_to_gpio = NULL;			//here is the 'pin_to_gpio' initialization
+      pin_to_gpio = &physToGpio_BP;			//here is the 'pin_to_gpio' initialization
    }
 
    rpi_revision = Py_BuildValue("i", revision);
