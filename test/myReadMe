@@ -1,0 +1,17 @@
+The modification is based on RPI.GPIO_BP_0.5.5
+
+The test files are all in the folder /myTest
+1.GPIO.output	-->		led.py
+2.GPIO.input	-->		led_read.py
+3.pull_up_dowm	-->		gpio_pull.py
+4.pwm			-->		pwm_test.py		pwm_test2.py
+5.GPIO.add_event_detect
+				-->		add_event_detect.py
+6.GPIO.wait_for_edge
+				-->		wait_for_edge.py
+7.setwarnings	-->		not tested,should be OKAY
+8.gpio_function	-->		gpio_function.py	test_gpio_function.py
+9.event_detected,remove_event_detect
+				-->		event_detect.py
+10.add_event_callback same as add_event_detect,both using the fun 'add_event_detect'
+
