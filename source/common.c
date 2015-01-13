@@ -25,8 +25,7 @@ SOFTWARE.
 #include "common.h"
 
 int gpio_mode = MODE_UNKNOWN;
-const int pin_to_gpio_rev1[27] = {-1, -1, -1, 0, -1, 1, -1, 4, 14, -1, 15, 17, 18, 21, -1, 22, 23, -1, 24, 10, -1, 9, 25, 11, 8, -1, 7};
-const int pin_to_gpio_rev2[27] = {-1, -1, -1, 2, -1, 3, -1, 4, 14, -1, 15, 17, 18, 27, -1, 22, 23, -1, 24, 10, -1, 9, 25, 11, 8, -1, 7};
+
 const int physToGpio_BP [64] =		//BOARD MODE
 {
 	-1, // 0
@@ -128,14 +127,23 @@ int check_gpio_priv(void)
     return 0;
 }
 
+int is_valid_raw_port(int channel)
+{
+    if (channel >=   0 && channel <  18) return 1; // PA
+    if (channel >=  32 && channel <  56) return 2; // PB
+    if (channel >=  64 && channel <  89) return 3; // PC
+    if (channel >=  96 && channel < 124) return 4; // PD
+    if (channel >= 128 && channel < 140) return 5; // PE
+    if (channel >= 160 && channel < 166) return 6; // PF
+    if (channel >= 192 && channel < 204) return 7; // PG
+    if (channel >= 224 && channel < 252) return 8; // PH
+    if (channel >= 256 && channel < 278) return 9; // PI
+    return 0;
+}
+
 int get_gpio_number(int channel, unsigned int *gpio)
 {
-    // check setmode() has been run
-    if (gpio_mode != BOARD && gpio_mode != BCM)
-    {
-        PyErr_SetString(PyExc_RuntimeError, "Please set pin numbering mode using GPIO.setmode(GPIO.BOARD) or GPIO.setmode(GPIO.BCM)");
-        return 3;
-    }
+
 
     // check channel number is in range
     if ( (gpio_mode == BCM && (channel < 0 || channel > 64))
@@ -156,9 +164,22 @@ int get_gpio_number(int channel, unsigned int *gpio)
             *gpio = *(*pin_to_gpio+channel);	//pin_to_gpio is initialized in py_gpio.c, the last several lines
         }
     }
-    else // gpio_mode == BCM
+    else if (gpio_mode == BCM)
     {
           *gpio = *(pinTobcm_BP + channel); 
+    }
+    else if (gpio_mode == MODE_RAW)
+    {
+        if (!is_valid_raw_port(channel))
+        {
+            PyErr_SetString(PyExc_ValueError, "The channel sent does not exist");
+            return 5;
+        }
+        *gpio = channel;
+    } else {
+        // setmode() has not been run
+        PyErr_SetString(PyExc_RuntimeError, "Please set pin numbering mode using GPIO.setmode(GPIO.BOARD) or GPIO.setmode(GPIO.BCM) or GPIO.setmode(GPIO.RAW)");
+        return 3;
     }
     
 	if(lemakerDebug)
