@@ -12,3 +12,10 @@ This a modified version RPi.GPIO for Banana Pi. The original version for Raspber
 5. sudo python setup.py install  ==> generate GPIO.so
 
 The modified RPi.GPIO for Banana Pi is powered by LeMaker < http://www.lemaker.org/ > .
+
+This version supports a new addressing mode "RAW" which enables you to use any GPIO pin. Below is an example which sets PD10 (which is pin 29 on the LCD connector) to a high level.
+
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.RAW)
+GPIO.setup(GPIO.PD+10, GPIO.OUT)
+GPIO.output(GPIO.PD+10, 1)
