@@ -61,6 +61,9 @@ void define_constants(PyObject *module)
    bcm = Py_BuildValue("i", BCM);
    PyModule_AddObject(module, "BCM", bcm);
 
+   raw = Py_BuildValue("i", MODE_RAW);
+   PyModule_AddObject(module, "RAW", raw);
+
    pud_off = Py_BuildValue("i", PUD_OFF + PY_PUD_CONST_OFFSET);
    PyModule_AddObject(module, "PUD_OFF", pud_off);
 
@@ -81,4 +84,14 @@ void define_constants(PyObject *module)
 
    version = Py_BuildValue("s", "0.5.8");
    PyModule_AddObject(module, "VERSION", version);
+
+   PyModule_AddObject(module, "PA", Py_BuildValue("i", 0));
+   PyModule_AddObject(module, "PB", Py_BuildValue("i", 32));
+   PyModule_AddObject(module, "PC", Py_BuildValue("i", 64));
+   PyModule_AddObject(module, "PD", Py_BuildValue("i", 96));
+   PyModule_AddObject(module, "PE", Py_BuildValue("i", 128));
+   PyModule_AddObject(module, "PF", Py_BuildValue("i", 160));
+   PyModule_AddObject(module, "PG", Py_BuildValue("i", 192));
+   PyModule_AddObject(module, "PH", Py_BuildValue("i", 224));
+   PyModule_AddObject(module, "PI", Py_BuildValue("i", 256));
 }
