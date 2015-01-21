@@ -23,6 +23,7 @@ SOFTWARE.
 #define MODE_UNKNOWN -1
 #define BOARD        10
 #define BCM          11
+#define MODE_RAW     12
 #define SERIAL       40
 #define SPI          41
 #define I2C          42
