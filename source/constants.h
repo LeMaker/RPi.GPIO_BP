@@ -34,6 +34,7 @@ PyObject *spi;
 PyObject *unknown;
 PyObject *board;
 PyObject *bcm;
+PyObject *raw;
 PyObject *pud_off;
 PyObject *pud_up;
 PyObject *pud_down;

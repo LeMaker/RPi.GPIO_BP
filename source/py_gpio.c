@@ -244,7 +244,7 @@ static PyObject *py_setmode(PyObject *self, PyObject *args)
       return NULL;
    }
 
-   if (gpio_mode != BOARD && gpio_mode != BCM)
+   if (gpio_mode != BOARD && gpio_mode != BCM && gpio_mode != MODE_RAW)
    {
       PyErr_SetString(PyExc_ValueError, "An invalid mode was passed to setmode()");
       return NULL;
@@ -259,6 +259,8 @@ static unsigned int chan_from_gpio(unsigned int gpio)
 
    if (gpio_mode == BCM)
       return gpio;
+   if (gpio_mode == MODE_RAW)
+       return -1;  //Not supported in RAW mode as there is not always a mapping
    for (chan=1; chan<65; chan++)
       if (*(*pin_to_gpio+chan) == gpio)
          return chan;

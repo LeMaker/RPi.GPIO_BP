@@ -1,1 +1,2 @@
-1. Fisrt version for Banana Pro.
+1. First version for Banana Pro.
+1. Use the mem method to control the gpio.
