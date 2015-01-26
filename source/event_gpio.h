@@ -34,4 +34,3 @@ int event_initialise(void);
 void event_cleanup(unsigned int gpio);
 void event_cleanup_all(void);
 int blocking_wait_for_edge(unsigned int gpio, unsigned int edge);
-unsigned int gpioToSysPin(unsigned int gpio);

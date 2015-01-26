@@ -24,6 +24,7 @@ SOFTWARE.
 #include <pthread.h>
 #include <time.h>
 #include "c_gpio.h"
+#include "common.h"
 #include "soft_pwm.h"
 pthread_t threads;
 
@@ -96,19 +97,19 @@ void *pwm_thread(void *threadarg)
 
         if (p->dutycycle > 0.0)
         {
-            output_gpio(p->gpio, 1);
+            output_gpio(*(pinTobcm_BP + p->gpio), 1);
             full_sleep(&p->req_on);
         }
 
         if (p->dutycycle < 100.0)
         {
-            output_gpio(p->gpio, 0);
+            output_gpio(*(pinTobcm_BP + p->gpio), 0);
             full_sleep(&p->req_off);
         }
     }
 
     // clean up
-    output_gpio(p->gpio, 0);
+    output_gpio(*(pinTobcm_BP + p->gpio), 0);
     remove_pwm(p->gpio);
     pthread_exit(NULL);
 }

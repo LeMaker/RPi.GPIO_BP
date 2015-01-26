@@ -44,8 +44,11 @@ static int PWM_init(PWMObject *self, PyObject *args, PyObject *kwds)
         return -1;
 
     // convert channel to gpio
-    if (get_gpio_number(channel, &(self->gpio)))
+    unsigned int tempt_gpio;
+    if (get_gpio_number(channel, &tempt_gpio, &(self->gpio)))
         return -1;
+
+//printf("pwm_init self->gpio = %d\n",self->gpio);	//OK
 
     // ensure channel set as output
     if (gpio_direction[self->gpio] != OUTPUT)

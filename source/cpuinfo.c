@@ -28,39 +28,40 @@ int f_a20=0;
 
 char *get_cpuinfo_revision(char *revision)
 {
-   FILE *fp;
-   char buffer[1024];
-   char hardware[1024];
-   int  rpi_found = 0;
+	FILE *fp;
+	char buffer[1024];
+	char hardware[1024];
+	int  rpi_found = 0;
 
-   if ((fp = fopen("/proc/cpuinfo", "r")) == NULL)
-      return 0;
+	if ((fp = fopen("/proc/cpuinfo", "r")) == NULL)
+		return 0;
 
-   while(!feof(fp)) {
-      fgets(buffer, sizeof(buffer) , fp);
-      sscanf(buffer, "Hardware	: %s", hardware);
-      if (strcmp(hardware, "sun7i") == 0) {
-         f_a20=1;
-         rpi_found = 1;
-		 //printf("BAPI: Banana Pi!!\n");
-	  }
-      sscanf(buffer, "Revision	: %s", revision);
-   }
-   fclose(fp);
+	while(!feof(fp)) {
+		fgets(buffer, sizeof(buffer) , fp);
+		sscanf(buffer, "Hardware	: %s", hardware);
+		if (strcmp(hardware, "sun7i") == 0) {
+			f_a20=1;
+			rpi_found = 1;
+			//printf("BAPI: Banana Pi!!\n");
+		}
+		sscanf(buffer, "Revision	: %s", revision);
+	}
+	fclose(fp);
 
-   if (!rpi_found)
-      revision = NULL;
-   return revision;
+	if (!rpi_found)
+		revision = NULL;
+	
+	return revision;
 }
 
 int get_rpi_revision(void)
 {
-   char revision[1024] = {'\0'};
-   
-   if (get_cpuinfo_revision(revision) == NULL)
-      return -1;
+	char revision[1024] = {'\0'};
+
+	if (get_cpuinfo_revision(revision) == NULL)
+		return -1;
 
 	if(f_a20) {		//bananapi		1
-	      return 2;//bananapi pro	2
+		return 2;//bananapi pro	2
 	}
 }

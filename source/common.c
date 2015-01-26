@@ -25,6 +25,11 @@ SOFTWARE.
 #include "common.h"
 
 int gpio_mode = MODE_UNKNOWN;
+int setup_error = 0;
+int module_setup = 0;
+int revision = -1;
+
+extern int f_a20;
 
 const int physToGpio_BP [64] =		//BOARD MODE
 {
@@ -68,8 +73,8 @@ const int pinTobcm_BP [64] =	//BCM MODE
 	273,244, //map to BCM GPIO22,23
 	245,272, //map to BCM GPIO24,25
 	37, 274, //map to BCM GPIO26,27
-	-1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 29... 44
-	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, //45... 60
+	-1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 28... 43
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, //44... 59
 	-1, -1, -1, -1 // ...63
 } ;
 const int physToGpioR3 [64] =//head num map to BCMpin
@@ -101,86 +106,98 @@ const int physToGpioR3 [64] =//head num map to BCMpin
 } ;
 
 
-int setup_error = 0;
-int module_setup = 0;
-int revision = -1;
-
-extern int f_a20;
-
 int check_gpio_priv(void)
 {
-    // check module has been imported cleanly
-    if (setup_error)
-    {
-        PyErr_SetString(PyExc_RuntimeError, "Module not imported correctly!");
-        return 1;
-    }
+	// check module has been imported cleanly
+	if (setup_error)
+	{
+		PyErr_SetString(PyExc_RuntimeError, "Module not imported correctly!");
+		return 1;
+	}
 
-    // check mmap setup has worked
-    if (!module_setup)
-    {
-        PyErr_SetString(PyExc_RuntimeError, "No access to /dev/mem.  Try running as root!");
-        return 2;
-    }
-    return 0;
+	// check mmap setup has worked
+	if (!module_setup)
+	{
+		PyErr_SetString(PyExc_RuntimeError, "No access to /dev/mem.  Try running as root!");
+		return 2;
+	}
+	return 0;
 }
+
 
 int is_valid_raw_port(int channel)
 {
-    if (channel >=   0 && channel <  18) return 1; // PA
-    if (channel >=  32 && channel <  56) return 2; // PB
-    if (channel >=  64 && channel <  89) return 3; // PC
-    if (channel >=  96 && channel < 124) return 4; // PD
-    if (channel >= 128 && channel < 140) return 5; // PE
-    if (channel >= 160 && channel < 166) return 6; // PF
-    if (channel >= 192 && channel < 204) return 7; // PG
-    if (channel >= 224 && channel < 252) return 8; // PH
-    if (channel >= 256 && channel < 278) return 9; // PI
-    return 0;
+	if (channel >= 0 && channel < 18) return 1; // PA
+	if (channel >= 32 && channel < 56) return 2; // PB
+	if (channel >= 64 && channel < 89) return 3; // PC
+	if (channel >= 96 && channel < 124) return 4; // PD
+	if (channel >= 128 && channel < 140) return 5; // PE
+	if (channel >= 160 && channel < 166) return 6; // PF
+	if (channel >= 192 && channel < 204) return 7; // PG
+	if (channel >= 224 && channel < 252) return 8; // PH
+	if (channel >= 256 && channel < 278) return 9; // PI
+	
+	return 0;
 }
 
-int get_gpio_number(int channel, unsigned int *gpio)
+
+int get_gpio_number(int channel, unsigned int *gpio,unsigned int *sys_gpio)
 {
+	// check channel number is in range
+	if ( (gpio_mode == BCM && (channel < 0 || channel > 64))
+	|| (gpio_mode == BOARD && (channel < 1 || channel > 64)) )
+	{
+		PyErr_SetString(PyExc_ValueError, "The channel sent is invalid on a Banana Pi");
+		return 4;
+	}
 
+	// convert channel to gpio
+	if (gpio_mode == BOARD)
+	{
+		if (*(*pin_to_gpio+channel) == -1)
+		{
+			PyErr_SetString(PyExc_ValueError, "The channel sent is invalid on a Banana Pi");
+			return 5;
+		} 
+		else 
+		{
+			*gpio = *(*pin_to_gpio+channel);	//pin_to_gpio is initialized in py_gpio.c, the last several lines
+			*sys_gpio = *(physToGpioR3 + channel);
+		}
+	}
+	else if (gpio_mode == BCM)
+	{
+		*gpio = *(pinTobcm_BP + channel); 
+		*sys_gpio = channel;
+	}
+	else if (gpio_mode == MODE_RAW)
+	{
+		if (!is_valid_raw_port(channel))
+		{
+			PyErr_SetString(PyExc_ValueError, "The channel sent does not exist");
+			return 5;
+		}
+		*gpio = channel;
+		
+		unsigned int i;
+		for (i = 0; i < 64; i++)
+		{
+			if (*(pinTobcm_BP + i) == channel)
+			{
+				*sys_gpio = i;
+				break;
+			}
+		}
+	}
+	else 
+	{
+		// setmode() has not been run
+		PyErr_SetString(PyExc_RuntimeError, "Please set pin numbering mode using GPIO.setmode(GPIO.BOARD) or GPIO.setmode(GPIO.BCM) or GPIO.setmode(GPIO.RAW)");
+		return 3;
+	}
 
-    // check channel number is in range
-    if ( (gpio_mode == BCM && (channel < 0 || channel > 64))
-      || (gpio_mode == BOARD && (channel < 1 || channel > 64)) )
-    {
-        PyErr_SetString(PyExc_ValueError, "The channel sent is invalid on a Banana Pi");
-        return 4;
-    }
-
-    // convert channel to gpio
-    if (gpio_mode == BOARD)
-    {
-    if (*(*pin_to_gpio+channel) == -1)
-        {
-            PyErr_SetString(PyExc_ValueError, "The channel sent is invalid on a Banana Pi");
-            return 5;
-        } else {
-            *gpio = *(*pin_to_gpio+channel);	//pin_to_gpio is initialized in py_gpio.c, the last several lines
-        }
-    }
-    else if (gpio_mode == BCM)
-    {
-          *gpio = *(pinTobcm_BP + channel); 
-    }
-    else if (gpio_mode == MODE_RAW)
-    {
-        if (!is_valid_raw_port(channel))
-        {
-            PyErr_SetString(PyExc_ValueError, "The channel sent does not exist");
-            return 5;
-        }
-        *gpio = channel;
-    } else {
-        // setmode() has not been run
-        PyErr_SetString(PyExc_RuntimeError, "Please set pin numbering mode using GPIO.setmode(GPIO.BOARD) or GPIO.setmode(GPIO.BCM) or GPIO.setmode(GPIO.RAW)");
-        return 3;
-    }
-    
 	if(lemakerDebug)
-		printf("GPIO = %d\n", *gpio);
-    return 0;
+		printf("GPIO = %d,sys_gpio = %d\n", *gpio,*sys_gpio);
+	
+	return 0;
 }
