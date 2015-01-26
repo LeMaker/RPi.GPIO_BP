@@ -278,7 +278,8 @@ void setup_gpio(int gpio, int direction, int pud)//void sunxi_set_gpio_mode(int 
 	}
 	else
 	{
-		printf("line:%dpin number error\n",__LINE__);
+        if (lemakerDebug)
+            printf("line:%dpin number error\n",__LINE__);
 	} 
 }
 
