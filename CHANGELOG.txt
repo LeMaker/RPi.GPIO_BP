@@ -1,2 +1,3 @@
 1. First version for Banana Pro.
-1. Use the mem method to control the gpio.
+2. Use the mem method to control the gpio.
+3. Add the RAW mode.
