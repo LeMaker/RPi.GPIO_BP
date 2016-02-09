@@ -658,7 +658,7 @@ PyMODINIT_FUNC initGPIO(void)
 
    // detect board revision and set up accordingly
    revision = get_rpi_revision();
-D	printf("BAPI: revision(%d)\n",revision);
+//D	printf("BAPI: revision(%d)\n",revision);
    if (revision == -1)
    {
       PyErr_SetString(PyExc_RuntimeError, "This module can only be run on a Raspberry Pi!");
