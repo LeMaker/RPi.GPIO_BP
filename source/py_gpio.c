@@ -253,6 +253,22 @@ static PyObject *py_setmode(PyObject *self, PyObject *args)
    Py_RETURN_NONE;
 }
 
+//python function getmode()
+static PyObject *py_getmode(PyObject *self, PyObject *args)
+{
+   PyObject *value;
+   if(setup_error)
+   {
+     PyErr_SetString(PyExc_RuntimeError, "Module not imported correctly!");
+     return NULL;
+   }
+   if(gpio_mode == MODE_UNKNOWN)
+     Py_RETURN_NONE;
+
+   value = Py_BuildValue("i", gpio_mode);
+   return value;
+}
+
 static unsigned int chan_from_gpio(unsigned int gpio)
 {
    int chan;
@@ -614,6 +630,7 @@ PyMethodDef rpi_gpio_methods[] = {
    {"output", py_output_gpio, METH_VARARGS, "Output to a GPIO channel\nchannel - either board pin number or BCM number depending on which mode is set.\nvalue   - 0/1 or False/True or LOW/HIGH"},
    {"input", py_input_gpio, METH_VARARGS, "Input from a GPIO channel.  Returns HIGH=1=True or LOW=0=False\nchannel - either board pin number or BCM number depending on which mode is set."},
    {"setmode", py_setmode, METH_VARARGS, "Set up numbering mode to use for channels.\nBOARD - Use Raspberry Pi board numbers\nBCM   - Use Broadcom GPIO 00..nn numbers"},
+   {"getmode", py_getmode, METH_VARARGS, "Get numbering mode used for channels.\nBOARD, BCM or None"},
    {"add_event_detect", (PyCFunction)py_add_event_detect, METH_VARARGS | METH_KEYWORDS, "Enable edge detection events for a particular GPIO channel.\nchannel      - either board pin number or BCM number depending on which mode is set.\nedge         - RISING, FALLING or BOTH\n[callback]   - A callback function for the event (optional)\n[bouncetime] - Switch bounce timeout in ms for callback"},
    {"remove_event_detect", py_remove_event_detect, METH_VARARGS, "Remove edge detection for a particular GPIO channel\nchannel - either board pin number or BCM number depending on which mode is set."},
    {"event_detected", py_event_detected, METH_VARARGS, "Returns True if an edge has occured on a given GPIO.  You need to enable edge detection using add_event_detect() first.\nchannel - either board pin number or BCM number depending on which mode is set."},
