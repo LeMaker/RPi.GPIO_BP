@@ -15,7 +15,7 @@ https://github.com/LeMaker/RPi.GPIO_BP.
     sudo apt-get update
     sudo apt-get install python-dev
     cd /RPi.GPIO_BP
-    python setup.py install                 
+    CFLAGS="-fcommon" python setup.py install                 
     sudo python setup.py install
     
 Please be attention that you need use both python and sudo pytohn to make the RPi.GPIO_BP work well.
