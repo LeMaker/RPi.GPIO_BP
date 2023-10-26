@@ -44,4 +44,4 @@ setup(name             = 'RPi.GPIO',
       url              = 'http://sourceforge.net/projects/raspberry-gpio-python/',
       classifiers      = classifiers,
       packages         = ['RPi'],
-      ext_modules      = [Extension('RPi.GPIO', ['source/py_gpio.c', 'source/c_gpio.c', 'source/cpuinfo.c', 'source/event_gpio.c', 'source/soft_pwm.c', 'source/py_pwm.c', 'source/common.c', 'source/constants.c'])])
+      ext_modules      = [Extension('RPi.GPIO', ['source/py_gpio.c', 'source/c_gpio.c', 'source/cpuinfo.c', 'source/event_gpio.c', 'source/soft_pwm.c', 'source/py_pwm.c', 'source/common.c', 'source/constants.c'],extra_compile_args=['-fcommon'])])
